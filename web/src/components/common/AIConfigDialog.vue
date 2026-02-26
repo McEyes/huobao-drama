@@ -335,6 +335,26 @@ const providerConfigs: Record<AIServiceType, ProviderConfig[]> = {
       name: "Google Gemini",
       models: ["gemini-2.5-pro", "gemini-3-flash-preview"],
     },
+    {
+      id: "doubao",
+      name: "豆包 (Doubao)",
+      models: [
+        "doubao-pro-32k",
+        "doubao-pro-4k",
+        "doubao-lite-32k",
+        "doubao-lite-4k",
+      ],
+    },
+    {
+      id: "qwen",
+      name: "通义千问 (Qwen)",
+      models: ["qwen-max", "qwen-plus", "qwen-turbo", "qwen-long"],
+    },
+    {
+      id: "kimi",
+      name: "Kimi (月之暗面)",
+      models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
+    },
   ],
   image: [
     {
@@ -496,6 +516,9 @@ const generateConfigName = (
     openai: "OpenAI",
     gemini: "Gemini",
     google: "Google",
+    doubao: "Doubao",
+    qwen: "Qwen",
+    kimi: "Kimi",
   };
 
   const serviceNames: Record<AIServiceType, string> = {
@@ -662,8 +685,16 @@ const handleProviderChange = () => {
     form.base_url = "https://generativelanguage.googleapis.com";
   } else if (form.provider === "minimax") {
     form.base_url = "https://api.minimaxi.com/v1";
-  } else if (form.provider === "volces" || form.provider === "volcengine") {
+  } else if (
+    form.provider === "volces" ||
+    form.provider === "volcengine" ||
+    form.provider === "doubao"
+  ) {
     form.base_url = "https://ark.cn-beijing.volces.com/api/v3";
+  } else if (form.provider === "qwen") {
+    form.base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1";
+  } else if (form.provider === "kimi") {
+    form.base_url = "https://api.moonshot.cn/v1";
   } else if (form.provider === "openai") {
     form.base_url = "https://api.openai.com/v1";
   } else {

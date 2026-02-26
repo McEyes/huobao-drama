@@ -94,11 +94,17 @@ func (s *AIService) CreateConfig(req *CreateAIConfigRequest) (*models.AIServiceC
 				}
 			}
 		case "doubao", "volcengine", "volces":
-			if req.ServiceType == "video" {
+			if req.ServiceType == "text" {
+				endpoint = "/chat/completions"
+			} else if req.ServiceType == "video" {
 				endpoint = "/contents/generations/tasks"
 				if queryEndpoint == "" {
 					queryEndpoint = "/generations/tasks/{taskId}"
 				}
+			}
+		case "qwen", "kimi":
+			if req.ServiceType == "text" {
+				endpoint = "/chat/completions"
 			}
 		default:
 			// 默认使用 OpenAI 格式
@@ -224,6 +230,17 @@ func (s *AIService) UpdateConfig(configID uint, req *UpdateAIConfigRequest) (*mo
 				updates["endpoint"] = "/video/generations"
 				updates["query_endpoint"] = "/video/task/{taskId}"
 			}
+		case "doubao", "volcengine", "volces":
+			if serviceType == "text" {
+				updates["endpoint"] = "/chat/completions"
+			} else if serviceType == "video" {
+				updates["endpoint"] = "/contents/generations/tasks"
+				updates["query_endpoint"] = "/generations/tasks/{taskId}"
+			}
+		case "qwen", "kimi":
+			if serviceType == "text" {
+				updates["endpoint"] = "/chat/completions"
+			}
 		}
 	} else if req.Endpoint != "" {
 		updates["endpoint"] = req.Endpoint
@@ -287,7 +304,7 @@ func (s *AIService) TestConnection(req *TestConnectionRequest) error {
 		s.log.Infow("Using Gemini client", "baseURL", req.BaseURL)
 		endpoint = "/v1beta/models/{model}:generateContent"
 		client = ai.NewGeminiClient(req.BaseURL, req.APIKey, model, endpoint)
-	case "openai", "chatfire":
+	case "openai", "chatfire", "doubao", "volcengine", "volces", "qwen", "kimi":
 		// OpenAI 格式（包括 chatfire 等）
 		s.log.Infow("Using OpenAI-compatible client", "baseURL", req.BaseURL, "provider", req.Provider)
 		endpoint = req.Endpoint
@@ -373,6 +390,12 @@ func (s *AIService) GetAIClient(serviceType string) (ai.AIClient, error) {
 		switch config.Provider {
 		case "gemini", "google":
 			endpoint = "/v1beta/models/{model}:generateContent"
+		case "doubao", "volcengine", "volces":
+			if config.ServiceType == "video" {
+				endpoint = "/contents/generations/tasks"
+			} else {
+				endpoint = "/chat/completions"
+			}
 		default:
 			endpoint = "/chat/completions"
 		}
@@ -401,6 +424,12 @@ func (s *AIService) GetAIClientForModel(serviceType string, modelName string) (a
 		switch config.Provider {
 		case "gemini", "google":
 			endpoint = "/v1beta/models/{model}:generateContent"
+		case "doubao", "volcengine", "volces":
+			if config.ServiceType == "video" {
+				endpoint = "/contents/generations/tasks"
+			} else {
+				endpoint = "/chat/completions"
+			}
 		default:
 			endpoint = "/chat/completions"
 		}

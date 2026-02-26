@@ -1,0 +1,5 @@
+- [x] 前端 `AIConfigDialog.vue` 中 `providerConfigs` 包含 Doubao, Qwen, Kimi 的配置。
+- [x] 前端选择新厂商时，Base URL 自动填充为正确的默认值（如 `https://ark.cn-beijing.volces.com/api/v3` for Doubao）。
+- [x] 后端 `ai_service.go` 的 `CreateConfig` 方法能正确处理新厂商，设置正确的 `endpoint`。
+- [x] 后端 `ai_service.go` 的 `UpdateConfig` 方法能正确处理新厂商，更新 `endpoint`。
+- [x] `GetAIClient` 方法能正确返回使用新配置的 OpenAI 客户端实例。
